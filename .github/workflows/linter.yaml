@@ -20,3 +20,5 @@ jobs:
       # Super-linter is a ready-to-run collection of linters and code analyzers, to help validate your source code
       - name: Super-Linter
         uses: super-linter/super-linter@v7.1.0
+        env: 
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
