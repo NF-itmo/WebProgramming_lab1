@@ -1,0 +1,19 @@
+FROM httpd:2.4-alpine
+
+# create staticfiles directory
+RUN mkdir -p /var/www/localhost/htdocs
+COPY ./static/ /var/www/localhost/htdocs/static/
+
+# add custom apache configs
+RUN mkdir -p /etc/apache2/conf-custom
+COPY ./conf/custom/ /etc/apache2/conf-custom/
+
+# create logs directory (temporary disabled)
+ARG APACHE_LOG_DIR
+RUN mkdir -p ${APACHE_LOG_DIR}
+RUN chown www-data:www-data ${APACHE_LOG_DIR}
+
+# setup main apache configuration
+COPY ./conf/httpd.conf /usr/local/apache2/conf/httpd.conf
+
+EXPOSE 80
