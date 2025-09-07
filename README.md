@@ -8,5 +8,5 @@
 - [ ] https support
 
 ### Java FCGI
-- [ ] User input validayion
+- [ ] User input validation
 - [ ] Add support of responces with information about errors
