@@ -17,4 +17,4 @@ RUN ./mvnw clean package
 FROM openjdk:17-jdk-slim
 WORKDIR server
 COPY --from=build target/*.jar server-1.0.jar
-ENTRYPOINT ["java", "-jar", "server-1.0.jar"]
+ENTRYPOINT ["java", "-DFCGI_PORT=55555", "-jar", "server-1.0.jar"]
