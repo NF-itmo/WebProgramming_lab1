@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Web lab1</title>
+	<script src="./js/ajax.js"></script>
 	<style>
 		:root {
 			/* Цветовая палитра в OKLCH */
@@ -643,6 +644,7 @@
 			
 			if (X && R && Y) {
 				// Stub
+				sendAJAXGETRequest("/fcgi-bin/", {"x": X, "y": Y, "r": R}, (data) => {console.log(data)});
 				console.log(`Данные отправлены!\nX: ${X}\nY: ${Y}\nR: ${R}`);	
 
 				// Сохраняем данные в историю
@@ -749,7 +751,6 @@
 				clearGraph();
 			}
 		}
-
 		// Инициализация при загрузке страницы
 		document.addEventListener('DOMContentLoaded', () => {
 			refreshHistoryTable();
