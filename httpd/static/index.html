@@ -722,9 +722,9 @@
 				const R = parseFloat(elem.R);
 
 				const cx = 20 + (1 + X/R)*80;
-				const cy = 20 + (1 + Y/R)*80;
+				const cy = 20 + (1 - Y/R)*80;
 
-				if (!container.querySelector(`circle[cx="${cx}"][cy="${cy}"]`) && Math.abs(cx) <= 200 && Math.abs(cy) <= 200) {
+				if (!container.querySelector(`circle[cx="${cx}"][cy="${cy}"]`) && 0 <= cx <= 200 && 0 <= cy <= 200) {
 					const point = document.createElementNS(svgns, 'circle');
 
 					point.setAttributeNS(null, 'cx', cx);
