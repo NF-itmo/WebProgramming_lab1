@@ -633,6 +633,29 @@
 		// Хранение истории данных
 		let formHistory = JSON.parse(localStorage.getItem('formHistory')) || [];
 
+		const FFCGIResponceHandler = (responce, X, Y, R) => {
+			const JSONresponce = JSON.parse(responce); 
+
+			// Сохраняем данные в историю
+			const formData = {
+				timestamp: new Date().toISOString(),
+				X: X,
+				Y: Y,
+				R: R,
+				elapsedTimeNs: JSONresponce.elapsedTimeNs,
+				isHitted: JSONresponce.result
+			};
+				
+			formHistory.push(formData);
+			localStorage.setItem('formHistory', JSON.stringify(formHistory));	
+
+			// Обновляем таблицу
+			refreshHistoryTable();
+
+			// Обновляем график
+			refreshGraph();
+		}
+
 		// Обработчик отправки формы
 		document.getElementById('graph-test-form').addEventListener('submit', function (e) {
 			e.preventDefault(); // Отключаем дефолтное поведение
@@ -643,35 +666,16 @@
 			const Y = document.getElementById('Y').value;
 			
 			if (X && R && Y) {
-				// Stub
-				sendAJAXGETRequest("/fcgi-bin/", {"x": X, "y": Y, "r": R}, (data) => {console.log(data)});
-				console.log(`Данные отправлены!\nX: ${X}\nY: ${Y}\nR: ${R}`);	
-
-				// Сохраняем данные в историю
-				const formData = {
-					timestamp: new Date().toISOString(),
-					X: X,
-					Y: Y,
-					R: R,
-					elapsedTimeMs: 100,
-					isHitted: true
-				};
-				
-				formHistory.push(formData);
-				localStorage.setItem('formHistory', JSON.stringify(formHistory));	
-
-				// Обновляем таблицу
-				refreshHistoryTable();
-
-				// Обновляем график
-				refreshGraph();
+				sendAJAXGETRequest("/fcgi-bin/", {"x": X, "y": Y, "r": R}, (resp) => {FFCGIResponceHandler(resp, X, Y, R)});
 
 				// Очищаем форму
 				this.reset();
+				
 			} else {
 				alert('Пожалуйста, заполните все поля формы')
 			}
 		});
+
 
 		// Функция для обновления таблицы истории
 		// TODO: переделать говнокод!
@@ -696,7 +700,7 @@
 
 				row.innerHTML = `
 					<td>${new Date(elem.timestamp).toLocaleString('ru-RU')}</td>
-					<td>${elem.elapsedTimeMs} ms</td>
+					<td>${elem.elapsedTimeNs} ns</td>
 					<td>${elem.X}</td>
 					<td>${elem.Y}</td>
 					<td>${elem.R}</td>
@@ -718,9 +722,9 @@
 				const R = parseFloat(elem.R);
 
 				const cx = 20 + (1 + X/R)*80;
-				const cy = 20 + (1 + Y/R)*80;
+				const cy = 20 + (1 - Y/R)*80;
 
-				if (!container.querySelector(`circle[cx="${cx}"][cy="${cy}"]`) && Math.abs(cx) <= 200 && Math.abs(cy) <= 200) {
+				if (!container.querySelector(`circle[cx="${cx}"][cy="${cy}"]`) && 0 <= cx <= 200 && 0 <= cy <= 200) {
 					const point = document.createElementNS(svgns, 'circle');
 
 					point.setAttributeNS(null, 'cx', cx);
