@@ -11,11 +11,13 @@ public class JsonBuilder {
     }
 
     public String build() {
+        if (data.isEmpty()) return "{}";
+
         StringBuilder jsonString = new StringBuilder("{\n");
 
         for (String key : data.keySet())
-            jsonString.append(String.format("\t%s: %s,\n", key, data.get(key)));
+            jsonString.append(String.format("\t\"%s\": %s,\n", key, data.get(key)));
 
-        return jsonString + "}";
+        return jsonString.substring(0, jsonString.length() - 2) + "\n}";
     }
 }

@@ -6,9 +6,8 @@ public class ResponseController {
             Connection: keep-alive
             Content-Type: application/json
             Content-Length: %d
-                       \s
-            %s
-           \s""";
+            
+            %s""";
     public static String create(JsonBuilder jsonBuilder) {
         String response = jsonBuilder.build();
         return String.format(BASE_RESPONSE, response.length(), response);
