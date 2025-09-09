@@ -1,0 +1,6 @@
+Require all granted
+
+# Редирект /index.html на /
+# Redirect 301 /index.html /
+RewriteEngine On
+RewriteRule ^index\.html$ / [R=301,L]

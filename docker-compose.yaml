@@ -1,0 +1,26 @@
+services:
+  apache-httpd:
+    container_name: httpd-server
+    build:
+      context: ./httpd/
+      args:
+         - APACHE_LOG_DIR="/var/log/httpd-server/"
+    restart: on-failure
+    ports:
+      - "8080:80"
+    networks:
+      - internal_net
+      
+  java-fastcgi:
+    container_name: fastcgi-server
+    build:
+      context: ./server/
+    restart: on-failure
+    depends_on:
+      - apache-httpd
+    networks:
+      - internal_net
+
+networks:
+  internal_net:
+    driver: bridge
