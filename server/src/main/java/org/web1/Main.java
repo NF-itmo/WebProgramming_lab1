@@ -9,6 +9,7 @@ import org.web1.checkers.CheckerFunction;
 import org.web1.utils.JsonBuilder;
 import org.web1.utils.QueryStringToHashmap;
 import org.web1.utils.ResponseController;
+import org.web1.utils.Timer;
 
 public class Main {
     private static final Function<String, HashMap<String,String>> parseQuery = new QueryStringToHashmap();
@@ -16,8 +17,11 @@ public class Main {
 
     public static void main(String[] args) {
         FCGIInterface fastCGI = new FCGIInterface();
+        Timer timer = new Timer();
 
         while (fastCGI.FCGIaccept() >= 0) {
+            timer.start();
+
             HashMap<String, String> queryParams = parseQuery.apply(
                     FCGIInterface.request.params.getProperty("QUERY_STRING")
             );
@@ -26,7 +30,7 @@ public class Main {
             String result = ResponseController.create(
                     new JsonBuilder()
                             .add("result", checkResult)
-                            .add("elapsedTime", 100)
+                            .add("elapsedTimeNs", timer.stop())
             );
 
             System.out.println(result);
