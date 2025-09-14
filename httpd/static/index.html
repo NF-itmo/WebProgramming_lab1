@@ -666,7 +666,29 @@
 			const Y = document.getElementById('Y').value;
 			
 			if (X && R && Y) {
-				sendAJAXGETRequest("/fcgi-bin/", {"x": X, "y": Y, "r": R}, (resp) => {FFCGIResponceHandler(resp, X, Y, R)});
+
+				// Stub
+				sendAJAXGETRequest("/fcgi/", {"x": X, "y": Y, "r": R}, (data) => {console.log(data)});
+				console.log(`Данные отправлены!\nX: ${X}\nY: ${Y}\nR: ${R}`);	
+
+				// Сохраняем данные в историю
+				const formData = {
+					timestamp: new Date().toISOString(),
+					X: X,
+					Y: Y,
+					R: R,
+					elapsedTimeMs: 100,
+					isHitted: true
+				};
+				
+				formHistory.push(formData);
+				localStorage.setItem('formHistory', JSON.stringify(formHistory));	
+
+				// Обновляем таблицу
+				refreshHistoryTable();
+
+				// Обновляем график
+				refreshGraph();
 
 				// Очищаем форму
 				this.reset();
