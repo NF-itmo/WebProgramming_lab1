@@ -6,10 +6,11 @@ import java.util.function.Function;
 
 import org.web1.checkers.Checker;
 import org.web1.checkers.CheckerFunction;
-import org.web1.utils.JsonBuilder;
-import org.web1.utils.QueryStringToHashmap;
-import org.web1.utils.ResponseController;
+import org.web1.netUtils.JsonBuilder;
+import org.web1.netUtils.QueryStringToHashmap;
+import org.web1.netUtils.ResponseFactory;
 import org.web1.utils.Timer;
+import org.web1.validators.QueryHmapValidator;
 
 public class Main {
     private static final Function<String, HashMap<String,String>> parseQuery = new QueryStringToHashmap();
@@ -25,9 +26,11 @@ public class Main {
             HashMap<String, String> queryParams = parseQuery.apply(
                     FCGIInterface.request.params.getProperty("QUERY_STRING")
             );
+            new QueryHmapValidator().apply(queryParams);
+
             boolean checkResult = checker.test(queryParams);
 
-            String result = ResponseController.create(
+            String result = ResponseFactory.create(
                     new JsonBuilder()
                             .add("result", checkResult)
                             .add("elapsedTimeNs", timer.stop())
