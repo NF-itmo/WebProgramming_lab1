@@ -4,7 +4,6 @@ import com.fastcgi.*;
 import java.util.HashMap;
 import java.util.function.Function;
 
-import org.validator.ExampleDTO;
 import org.validator.ValidatedRecordFactory;
 import org.web1.DTOs.RequestDTO;
 import org.web1.checkers.Checker;
