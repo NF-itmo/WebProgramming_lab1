@@ -5,11 +5,7 @@ import org.web1.checkers.utils.GraphUtils;
 import java.util.HashMap;
 
 public class Checker implements CheckerFunction{
-    public boolean test(HashMap<String, String> data) {
-        int x = Integer.parseInt(data.get("x"));
-        float y = Float.parseFloat(data.get("y"));
-        float r = Float.parseFloat(data.get("r"));
-
+    public boolean test(int x, float y, float r) {
         final GraphQuarters quarter = GraphUtils.getQuarter(x, y);
 
         if (quarter == GraphQuarters.FIRST_QUADRANT) return firstQuarterTester(x, y, r);
