@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 import org.validator.ValidatedRecordFactory;
+import org.validator.validation.exceptions.ValidationException;
 import org.web1.DTOs.RequestDTO;
 import org.web1.checkers.Checker;
 import org.web1.checkers.CheckerFunction;
@@ -49,7 +50,7 @@ public class Main {
                 );
 
                 System.out.println(result);
-            } catch (Exception e) {
+            } catch (ValidationException e) {
                 String result = ResponseFactory.create(
                         new JsonBuilder().add("error", '"'+e.getMessage()+'"')
                 );
