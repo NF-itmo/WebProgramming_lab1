@@ -1,10 +1,22 @@
 services:
-  apache-httpd:
-    container_name: httpd-server
+#  apache-httpd:
+#    container_name: httpd-server-apache
+#    build:
+#      context: ./httpd/
+#      dockerfile: ./Dockerfile-apache
+#      args:
+#         - APACHE_LOG_DIR="/var/log/httpd-server/"
+#    restart: on-failure
+#    ports:
+#      - "8080:80"
+#    networks:
+#      - internal_net
+
+  nginx-httpd:
+    container_name: httpd-server-nginx
     build:
       context: ./httpd/
-      args:
-         - APACHE_LOG_DIR="/var/log/httpd-server/"
+      dockerfile: ./Dockerfile-nginx
     restart: on-failure
     ports:
       - "8080:80"
@@ -17,7 +29,8 @@ services:
       context: ./server/
     restart: on-failure
     depends_on:
-      - apache-httpd
+    #  - apache-httpd
+      - nginx-httpd
     networks:
       - internal_net
 
