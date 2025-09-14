@@ -668,27 +668,8 @@
 			if (X && R && Y) {
 
 				// Stub
-				sendAJAXGETRequest("/fcgi/", {"x": X, "y": Y, "r": R}, (data) => {console.log(data)});
+				sendAJAXGETRequest("/fcgi/", {"x": X, "y": Y, "r": R}, (data) => {FFCGIResponceHandler(data, X,Y,R)});
 				console.log(`Данные отправлены!\nX: ${X}\nY: ${Y}\nR: ${R}`);	
-
-				// Сохраняем данные в историю
-				const formData = {
-					timestamp: new Date().toISOString(),
-					X: X,
-					Y: Y,
-					R: R,
-					elapsedTimeNs: 100,
-					isHitted: true
-				};
-				
-				formHistory.push(formData);
-				localStorage.setItem('formHistory', JSON.stringify(formHistory));	
-
-				// Обновляем таблицу
-				refreshHistoryTable();
-
-				// Обновляем график
-				refreshGraph();
 
 				// Очищаем форму
 				this.reset();
