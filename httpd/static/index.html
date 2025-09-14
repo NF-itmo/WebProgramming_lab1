@@ -644,7 +644,7 @@
 			
 			if (X && R && Y) {
 				// Stub
-				sendAJAXGETRequest("/fcgi-bin/", {"x": X, "y": Y, "r": R}, (data) => {console.log(data)});
+				sendAJAXGETRequest("/fcgi/", {"x": X, "y": Y, "r": R}, (data) => {console.log(data)});
 				console.log(`Данные отправлены!\nX: ${X}\nY: ${Y}\nR: ${R}`);	
 
 				// Сохраняем данные в историю
