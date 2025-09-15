@@ -27,6 +27,8 @@
 			--svg-axis-primary: oklch(75% 0.04 260);
 			--svg-fill-area: oklch(52% 0.07 200);
 
+			--error-bg: oklch(55% 0.15 19);
+
 			/* Всякое разное */
 			--btn-active-translateY: -2px;
 
@@ -231,12 +233,8 @@
 				}
 
 			.container {
-				animation: fadeIn 0.6s ease-out;
+				animation: containerFadeIn 0.6s ease-out;
 			}
-
-			.form-row {
-				animation: fadeIn 0.8s ease-out;
-			}	
 
 			/* Адаптивность */
 			@media (max-width: 768px) {
@@ -375,7 +373,28 @@
 				transform: translateY(var(--btn-active-translateY));
 			}
 
-		 /* Адаптивность */
+		/* Сообщение об ошибке */
+		.error-message {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+
+			background-color: var(--error-bg);
+			color: var(--text-primary);
+
+			padding: 15px 20px;
+
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+			z-index: 1000;
+
+			max-width: 350px;
+			
+			animation: errorSlideIn 0.3s ease-out, errorFadeOut 0.5s ease-in 4.5s forwards;
+		}
+		
+		/* Адаптивность */
         @media (max-width: 968px) {
             .container {
                 min-width: 95%;
@@ -404,7 +423,7 @@
         }
 
 		/* Анимации */
-		@keyframes fadeIn {
+		@keyframes containerFadeIn {
 			from {
 				opacity: 0;
 				transform: translateY(20px);
@@ -414,6 +433,27 @@
 				transform: translateY(0);
 			}
 		}	
+
+		@keyframes errorSlideIn {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+		
+		@keyframes errorFadeOut {
+			from {
+				opacity: 1;
+			}
+			to {
+				opacity: 0;
+				display: none;
+			}
+		}
 	</style>
 </head>
 <body>
@@ -633,8 +673,34 @@
 		// Хранение истории данных
 		let formHistory = JSON.parse(localStorage.getItem('formHistory')) || [];
 
+		const showError = (message) => {
+			// Убираем существующие сообщения
+			const existingErrors = document.querySelectorAll('.error-message');
+			existingErrors.forEach(error => error.remove());
+			
+			// Слздаём элемент
+			const errorDiv = document.createElement('div');
+			errorDiv.className = 'error-message';
+			errorDiv.textContent = message;
+			
+			// Вставка
+			document.body.appendChild(errorDiv);
+			
+			// Убираем по прошествии 5-ти секунд
+			setTimeout(() => {
+				if (errorDiv.parentNode) {
+					errorDiv.parentNode.removeChild(errorDiv);
+				}
+			}, 5000);
+		};
+
 		const FFCGIResponceHandler = (responce, X, Y, R) => {
-			const JSONresponce = JSON.parse(responce); 
+			const JSONResponce = JSON.parse(responce); 
+
+			if (JSONResponce.error) {
+				showError(`Ошибка: ${JSONResponce.error}`);
+				return;
+			}
 
 			// Сохраняем данные в историю
 			const formData = {
@@ -642,8 +708,8 @@
 				X: X,
 				Y: Y,
 				R: R,
-				elapsedTimeNs: JSONresponce.elapsedTimeNs,
-				isHitted: JSONresponce.result
+				elapsedTimeNs: JSONResponce.elapsedTimeNs,
+				isHitted: JSONResponce.result
 			};
 				
 			formHistory.push(formData);
