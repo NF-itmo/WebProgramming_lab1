@@ -3,7 +3,7 @@
 
 ## Quick Start
 ```bash
-docker comose up
+docker compose up
 ```
 
 ## Structure
@@ -21,6 +21,7 @@ docker comose up
       ├── lib/              # Директория с библиотекой для fastcgi
       ├── src/              # Исходники
       └── Dockerfile        # Dockerfile для fastcgi-сервера
+└── docs                    # Дополнительная документация
 ```
 
 
