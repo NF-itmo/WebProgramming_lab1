@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info: 
+  title: "WebProg Lab1"
+  version: 0.0.2
+  description: |
+    Сервак из говна и палок 
+
+    Last update: 00:00 15.09.25 by NF-coder
+servers:
+  - url: http://localhost:8080/fcgi/
+    description: FastCGI API
+
+paths:
+  /:
+    get:
+      summary: Тест попадания в область
+      tags:
+        - General
+      parameters:
+        - in: query
+          name: x
+          required: true
+          schema:
+            $ref: "#/components/schemas/x"
+        - in: query
+          name: y
+          required: true
+          schema:
+            $ref: "#/components/schemas/y"
+        - in: query
+          name: r
+          required: true
+          schema:
+            $ref: "#/components/schemas/r"
+
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: "true if hitted area and false if missed"
+                    example: true
+                  elapsedTimeNs:
+                    type: integer
+                    description: "Time in ns that server spent while handling responce"
+                    example: 12345
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    x:
+      type: integer
+      description: Кордината X
+      example: 0
+    y:
+      type: number
+      description: Кордината Y
+      example: 0
+    r:
+      type: number
+      description: Параметр R
+      example: 2
+    
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: "Description of error"
+          example: Some text
+
+
+
+
+
