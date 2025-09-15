@@ -1,4 +1,4 @@
-package org.web1.timer;
+package org.web1.utils.timer;
 
 public class Timer {
     long startTime;

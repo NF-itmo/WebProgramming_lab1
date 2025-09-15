@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim AS build
+FROM eclipse-temurin:17-jdk-alpine AS build
 
 # copy maven confis
 COPY pom.xml mvnw ./
@@ -14,7 +14,7 @@ RUN ./mvnw dependency:resolve
 COPY src src
 RUN ./mvnw clean package
 
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR server
 COPY --from=build target/*.jar server-1.0.jar
 ENTRYPOINT ["java", "-DFCGI_PORT=55555", "-jar", "server-1.0.jar"]
