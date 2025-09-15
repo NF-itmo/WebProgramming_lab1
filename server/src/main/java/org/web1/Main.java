@@ -4,12 +4,15 @@ import com.fastcgi.*;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import org.validator.ValidatedRecordFactory;
+import org.validator.validation.exceptions.ValidationException;
+import org.web1.DTOs.RequestDTO;
 import org.web1.checkers.Checker;
 import org.web1.checkers.CheckerFunction;
-import org.web1.utils.JsonBuilder;
-import org.web1.utils.QueryStringToHashmap;
-import org.web1.utils.ResponseController;
-import org.web1.utils.Timer;
+import org.web1.netUtils.JsonBuilder;
+import org.web1.netUtils.QueryStringToHashmap;
+import org.web1.netUtils.ResponseFactory;
+import org.web1.timer.Timer;
 
 public class Main {
     private static final Function<String, HashMap<String,String>> parseQuery = new QueryStringToHashmap();
@@ -22,18 +25,37 @@ public class Main {
         while (fastCGI.FCGIaccept() >= 0) {
             timer.start();
 
-            HashMap<String, String> queryParams = parseQuery.apply(
+            final HashMap<String, String> queryParams = parseQuery.apply(
                     FCGIInterface.request.params.getProperty("QUERY_STRING")
             );
-            boolean checkResult = checker.test(queryParams);
 
-            String result = ResponseController.create(
-                    new JsonBuilder()
-                            .add("result", checkResult)
-                            .add("elapsedTimeNs", timer.stop())
-            );
+            try {
+                RequestDTO requestData = ValidatedRecordFactory.create(
+                        RequestDTO.class,
+                        queryParams.get("x"),
+                        queryParams.get("r"),
+                        queryParams.get("y")
+                );
 
-            System.out.println(result);
+                boolean checkResult = checker.test(
+                        Integer.parseInt(requestData.X()),
+                        Float.parseFloat(requestData.Y()),
+                        Float.parseFloat(requestData.R())
+                );
+
+                String result = ResponseFactory.create(
+                        new JsonBuilder()
+                                .add("result", checkResult)
+                                .add("elapsedTimeNs", timer.stop())
+                );
+
+                System.out.println(result);
+            } catch (ValidationException e) {
+                String result = ResponseFactory.create(
+                        new JsonBuilder().add("error", '"'+e.getMessage()+'"')
+                );
+                System.out.println(result);
+            }
         }
     }
 }

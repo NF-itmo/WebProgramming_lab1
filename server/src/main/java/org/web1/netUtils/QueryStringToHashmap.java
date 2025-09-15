@@ -1,4 +1,4 @@
-package org.web1.utils;
+package org.web1.netUtils;
 
 import java.util.HashMap;
 import java.util.function.Function;

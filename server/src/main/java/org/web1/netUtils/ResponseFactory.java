@@ -1,6 +1,6 @@
-package org.web1.utils;
+package org.web1.netUtils;
 
-public class ResponseController {
+public class ResponseFactory {
     private static final String BASE_RESPONSE = """
             Access-Control-Allow-Origin: *
             Connection: keep-alive
