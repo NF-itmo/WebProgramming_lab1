@@ -1,7 +1,7 @@
 package org.web1.checkers.utils;
 
 public class PlotUtils {
-    public static PlotQuarters getQuarter(int x, float y) {
+    public static PlotQuarters getQuarter(final int x, final float y) {
         boolean isXGraterOrEqualsZero = x >= 0;
         boolean isYGraterOrEqualsZero = y >= 0;
 

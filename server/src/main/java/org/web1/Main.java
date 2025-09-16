@@ -1,15 +1,17 @@
 package org.web1;
 
-import com.fastcgi.*;
+import com.fastcgi.FCGIInterface;
 
 import java.util.HashMap;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 import org.validator.ValidatedRecordFactory;
 import org.validator.validation.exceptions.ValidationException;
 import org.web1.DTOs.RequestDTO;
 import org.web1.checkers.Checker;
 import org.web1.checkers.CheckerFunction;
+import org.web1.utils.SimpleLogger;
 import org.web1.utils.mappers.JsonBuilder;
 import org.web1.utils.mappers.QueryStringToHashmap;
 import org.web1.utils.responce.ResponseController;
@@ -23,6 +25,8 @@ public class Main {
     public static void main(String[] args) {
         FCGIInterface fastCGI = new FCGIInterface();
         Timer timer = new Timer();
+        Logger logger = SimpleLogger.create();
+        ResponseController responseController = new ResponseController(logger);
 
         while (fastCGI.FCGIaccept() >= 0) {
             timer.start();
@@ -30,6 +34,7 @@ public class Main {
             final HashMap<String, String> queryParams = parseQuery.apply(
                     FCGIInterface.request.params.getProperty("QUERY_STRING")
             );
+            logger.info("Received request with query: " + queryParams);
 
             try {
                 RequestDTO requestData = ValidatedRecordFactory.create(
@@ -45,18 +50,21 @@ public class Main {
                         Float.parseFloat(requestData.R())
                 );
 
-                ResponseController.send(
+
+                responseController.send(
                         new JsonBuilder()
                                 .add("result", checkResult)
                                 .add("elapsedTimeNs", timer.stop()),
                         ResponseStatus.OK
                 );
             } catch (ValidationException e) {
-                ResponseController.send(
+                responseController.send(
                         new JsonBuilder()
                                 .add("error", '"'+e.getMessage()+'"'),
                         ResponseStatus.BAD_REQUEST
                 );
+            } catch (Exception e) {
+                logger.severe("Failed to process request: " + e.getMessage());
             }
         }
     }

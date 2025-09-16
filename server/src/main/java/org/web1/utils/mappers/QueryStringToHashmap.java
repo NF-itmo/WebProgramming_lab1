@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 public class QueryStringToHashmap implements Function<String, HashMap<String,String>> {
-    public HashMap<String, String> apply(String jsonStr) {
+    public HashMap<String, String> apply(final String jsonStr) {
         HashMap<String, String> params = new HashMap<>();
 
         String[] pairs = jsonStr.split("&"); // get key+value pairs string
