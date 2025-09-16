@@ -1,16 +1,14 @@
 package org.web1.checkers;
-import org.web1.checkers.utils.GraphQuarters;
-import org.web1.checkers.utils.GraphUtils;
-
-import java.util.HashMap;
+import org.web1.checkers.utils.PlotQuarters;
+import org.web1.checkers.utils.PlotUtils;
 
 public class Checker implements CheckerFunction{
     public boolean test(int x, float y, float r) {
-        final GraphQuarters quarter = GraphUtils.getQuarter(x, y);
+        final PlotQuarters quarter = PlotUtils.getQuarter(x, y);
 
-        if (quarter == GraphQuarters.FIRST_QUADRANT) return firstQuarterTester(x, y, r);
-        else if (quarter == GraphQuarters.SECOND_QUADRANT) return secondQuarterTester(x, y, r);
-        else if (quarter == GraphQuarters.THIRD_QUADRANT) return thirdQuarterTester(x, y, r);
+        if (quarter == PlotQuarters.FIRST_QUADRANT) return firstQuarterTester(x, y, r);
+        else if (quarter == PlotQuarters.SECOND_QUADRANT) return secondQuarterTester(x, y, r);
+        else if (quarter == PlotQuarters.THIRD_QUADRANT) return thirdQuarterTester(x, y, r);
         return forthQuarterTester(x, y, r);
     }
 

@@ -672,7 +672,7 @@
 
 	<script>
 		// Хранение истории данных
-		let formHistory = JSON.parse(localStorage.getItem('formHistory')) || [];
+		let formHistory = JSON.parse(sessionStorage.getItem('formHistory')) || [];
 
 		const showError = (message) => {
 			// Убираем существующие сообщения
@@ -714,7 +714,7 @@
 			};
 				
 			formHistory.push(formData);
-			localStorage.setItem('formHistory', JSON.stringify(formHistory));	
+			sessionStorage.setItem('formHistory', JSON.stringify(formHistory));	
 
 			// Обновляем таблицу
 			refreshHistoryTable();
@@ -733,7 +733,6 @@
 			const Y = document.getElementById('Y').value;
 			
 			if (X && R && Y) {
-
 				sendAJAXGETRequest("/fcgi/", {"x": X, "y": Y, "r": R}, (data) => {FFCGIResponceHandler(data, X,Y,R)});
 
 				// Очищаем форму

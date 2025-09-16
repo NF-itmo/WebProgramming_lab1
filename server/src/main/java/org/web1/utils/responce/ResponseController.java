@@ -5,9 +5,8 @@ import org.web1.utils.mappers.JsonBuilder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-public class ResponseFactory {
+public class ResponseController {
     private static final String BASE_RESPONSE = """
-            HTTP/2 %s\r
             Status: %s\r
             Access-Control-Allow-Origin: *\r
             Connection: keep-alive\r
@@ -23,14 +22,13 @@ public class ResponseFactory {
         responseStatus.put(ResponseStatus.OK, "200");
     }
 
-    public static String create(JsonBuilder jsonBuilder, ResponseStatus status) {
+    public static void send(JsonBuilder jsonBuilder, ResponseStatus status) {
         String response = jsonBuilder.build();
 
-        return String.format(
-                BASE_RESPONSE,
+        System.out.printf(
+                (BASE_RESPONSE),
                 responseStatus.get(status),
-                responseStatus.get(status),
-                response.getBytes(StandardCharsets.UTF_8).length + 1,
+                response.getBytes(StandardCharsets.UTF_8).length,
                 response
         );
     }

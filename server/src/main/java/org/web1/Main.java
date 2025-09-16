@@ -12,7 +12,7 @@ import org.web1.checkers.Checker;
 import org.web1.checkers.CheckerFunction;
 import org.web1.utils.mappers.JsonBuilder;
 import org.web1.utils.mappers.QueryStringToHashmap;
-import org.web1.utils.responce.ResponseFactory;
+import org.web1.utils.responce.ResponseController;
 import org.web1.utils.responce.ResponseStatus;
 import org.web1.utils.timer.Timer;
 
@@ -45,21 +45,18 @@ public class Main {
                         Float.parseFloat(requestData.R())
                 );
 
-                String result = ResponseFactory.create(
+                ResponseController.send(
                         new JsonBuilder()
                                 .add("result", checkResult)
                                 .add("elapsedTimeNs", timer.stop()),
                         ResponseStatus.OK
                 );
-
-                System.out.println(result);
             } catch (ValidationException e) {
-                String result = ResponseFactory.create(
+                ResponseController.send(
                         new JsonBuilder()
                                 .add("error", '"'+e.getMessage()+'"'),
                         ResponseStatus.BAD_REQUEST
                 );
-                System.out.println(result);
             }
         }
     }
