@@ -689,7 +689,7 @@
             const R = Number(document.querySelector('input[name="R"]:checked').value);
             const Y = Number(document.getElementById('Y').value);
 
-            sendAJAXRequest("GET", "/fcgi/", {"x": X, "y": Y, "r": R})
+            sendAJAXRequest("GET", "/fcgi/test", {"x": X, "y": Y, "r": R})
                 .then(
                     result => {testHandler(result, X, Y, R)},
                     result => {errorHandler(result)}
@@ -721,7 +721,7 @@
                 ...convertInputCordsToSvgCords(X, Y, R),
                 3,
                 "point-on-graph"
-            );  
+            );
         }
 
         // Функция для очистки истории
@@ -729,12 +729,39 @@
             if (confirm('Вы уверены, что хотите очистить всю историю?')) {
                 history.clear();
                 plot.clear();
+                sendAJAXRequest("DELETE", "/fcgi/journal")
+                    .then(
+                        result => {},
+                        result => {errorHandler(result)}
+                    );
             }
         }
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
-            // placeholder
+            // Получаем историю с сервера
+            sendAJAXRequest("GET", "/fcgi/journal")
+                .then(
+                    result => {
+                        const JSONResponce = JSON.parse(result.response);
+                        JSONResponce.result.forEach((elem) => {
+                            plot.addPoint(
+                                ...convertInputCordsToSvgCords(elem.x, elem.y, elem.r),
+                                3,
+                                "point-on-graph"
+                            );
+                        });
+                        history.addHistoryItem(
+                            new Date(elem.timestamp).toISOString(),
+                            elem.elapsedTimeNs,
+                            elem.x,
+                            elem.y,
+                            elem.r,
+                            elem.isInsideArea
+                        )
+                    },
+                    result => {errorHandler(result)}
+                );
         });
     </script>
 </body>
