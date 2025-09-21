@@ -1,9 +1,9 @@
-package org.web1.utils.mappers;
+package org.web1.http;
 
 import java.util.HashMap;
 import java.util.function.Function;
 
-public class QueryStringToHashmap implements Function<String, HashMap<String,String>> {
+public class QueryStringParser implements Function<String, HashMap<String,String>> {
     public HashMap<String, String> apply(final String jsonStr) {
         HashMap<String, String> params = new HashMap<>();
 

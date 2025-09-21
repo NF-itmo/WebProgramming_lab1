@@ -1,6 +1,6 @@
-package org.web1.checkers;
-import org.web1.checkers.utils.PlotQuarters;
-import org.web1.checkers.utils.PlotUtils;
+package org.web1.http.handler.tester.checkers;
+import org.web1.http.handler.tester.checkers.utils.PlotQuarters;
+import org.web1.http.handler.tester.checkers.utils.PlotUtils;
 
 public class Checker implements CheckerFunction{
     public boolean test(final int x, final float y, final float r) {

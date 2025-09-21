@@ -1,15 +1,17 @@
-package org.web1.utils;
+package org.web1.utils.logging;
 
 import java.io.IOException;
 import java.util.logging.*;
 
 public class SimpleLogger {
-    static Logger logger = Logger.getLogger(Logger.class.getName());
+    private static final Logger logger = Logger.getLogger(SimpleLogger.class.getName());
+    private static final Formatter SimpleLoggerFormatter = new SimpleLoggerFormatter();
 
     public static Logger create(){
         try {
             Handler fileHandler = new FileHandler("log.log");
-            fileHandler.setFormatter(fileHandler.getFormatter());
+
+            fileHandler.setFormatter(SimpleLoggerFormatter);
             logger.addHandler(fileHandler);
             logger.setLevel(Level.INFO);
 

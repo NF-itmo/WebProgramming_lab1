@@ -1,15 +1,12 @@
-package org.web1.utils.responce;
+package org.web1.http.response;
 
-import org.web1.utils.mappers.JsonBuilder;
+import org.web1.utils.json.JsonBuilder;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ResponseController {
+public class HttpResponseWriter {
     private static final String BASE_RESPONSE = """
             Status: %s\r
             Access-Control-Allow-Origin: *\r
@@ -27,7 +24,7 @@ public class ResponseController {
         responseStatus.put(ResponseStatus.OK, "200");
     }
 
-    public ResponseController(Logger logger) {
+    public HttpResponseWriter(Logger logger) {
         this.logger = logger;
     }
 

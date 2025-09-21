@@ -1,4 +1,4 @@
-package org.web1.utils.responce;
+package org.web1.http.response;
 
 public enum ResponseStatus {
     BAD_REQUEST,

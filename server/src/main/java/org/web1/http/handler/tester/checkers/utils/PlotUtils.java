@@ -1,4 +1,4 @@
-package org.web1.checkers.utils;
+package org.web1.http.handler.tester.checkers.utils;
 
 public class PlotUtils {
     public static PlotQuarters getQuarter(final int x, final float y) {
