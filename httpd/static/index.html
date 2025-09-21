@@ -750,15 +750,16 @@
                                 3,
                                 "point-on-graph"
                             );
+                            history.addHistoryItem(
+                                new Date(elem.timestamp).toISOString(),
+                                elem.elapsedTimeNs,
+                                elem.x,
+                                elem.y,
+                                elem.r,
+                                elem.isInsideArea
+                            )
                         });
-                        history.addHistoryItem(
-                            new Date(elem.timestamp).toISOString(),
-                            elem.elapsedTimeNs,
-                            elem.x,
-                            elem.y,
-                            elem.r,
-                            elem.isInsideArea
-                        )
+                        
                     },
                     result => {errorHandler(result)}
                 );
