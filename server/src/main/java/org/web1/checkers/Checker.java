@@ -1,32 +1,30 @@
 package org.web1.checkers;
-import org.web1.checkers.utils.GraphQuarters;
-import org.web1.checkers.utils.GraphUtils;
-
-import java.util.HashMap;
+import org.web1.checkers.utils.PlotQuarters;
+import org.web1.checkers.utils.PlotUtils;
 
 public class Checker implements CheckerFunction{
-    public boolean test(int x, float y, float r) {
-        final GraphQuarters quarter = GraphUtils.getQuarter(x, y);
+    public boolean test(final int x, final float y, final float r) {
+        final PlotQuarters quarter = PlotUtils.getQuarter(x, y);
 
-        if (quarter == GraphQuarters.FIRST_QUADRANT) return firstQuarterTester(x, y, r);
-        else if (quarter == GraphQuarters.SECOND_QUADRANT) return secondQuarterTester(x, y, r);
-        else if (quarter == GraphQuarters.THIRD_QUADRANT) return thirdQuarterTester(x, y, r);
+        if (quarter == PlotQuarters.FIRST_QUADRANT) return firstQuarterTester(x, y, r);
+        else if (quarter == PlotQuarters.SECOND_QUADRANT) return secondQuarterTester(x, y, r);
+        else if (quarter == PlotQuarters.THIRD_QUADRANT) return thirdQuarterTester(x, y, r);
         return forthQuarterTester(x, y, r);
     }
 
-    private boolean firstQuarterTester(int x, float y, float r) {
-        return x <= r/2 && y <= r;
+    private boolean firstQuarterTester(final int x, final float y, final float r) {
+        return x <= r / 2 && y <= r;
     }
 
-    private boolean secondQuarterTester(int x, float y, float r) {
-        return y <= (r/2 + 0.5f*x);
+    private boolean secondQuarterTester(final int x, final float y, final float r) {
+        return y <= (r / 2 + 0.5f * x);
     }
 
-    private boolean thirdQuarterTester(int x, float y, float r) {
+    private boolean thirdQuarterTester(final int x, final float y,final float r) {
         return false;
     }
 
-    private boolean forthQuarterTester(int x, float y, float r) {
-        return Math.sqrt(x*x + y*y) <= r/2;
+    private boolean forthQuarterTester(final int x, final float y, final float r) {
+        return Math.sqrt(x * x + y * y) <= r / 2;
     }
 }
