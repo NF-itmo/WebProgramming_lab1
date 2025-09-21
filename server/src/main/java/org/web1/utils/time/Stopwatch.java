@@ -1,6 +1,6 @@
-package org.web1.utils.timer;
+package org.web1.utils.time;
 
-public class Timer {
+public class Stopwatch {
     private long startTime;
     public void start() {
         this.startTime = System.nanoTime();

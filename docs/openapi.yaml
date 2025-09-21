@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info: 
   title: "WebProg Lab1"
-  version: 0.0.2
+  version: 0.1.0
   description: |
     Сервак из говна и палок 
 
@@ -11,11 +11,11 @@ servers:
     description: FastCGI API
 
 paths:
-  /:
+  /test:
     get:
       summary: Тест попадания в область
       tags:
-        - General
+        - Test hit
       parameters:
         - in: query
           name: x
@@ -55,6 +55,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  
+  /journal:
+    get:
+      summary: Получение истории
+      tags:
+        - Journal
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Нужные для получения поля профиля пользователя
+                items:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: integer
+                      description: "Timestamp в милисекундах"
+                      example: 1000000
+                    elapsedTimeNs:
+                      type: integer
+                      description: "Затраченное на обработку время в наносекундах"
+                      example: 100
+                    x:
+                      type: integer
+                      example: 0
+                    y:
+                      type: integer
+                      example: 0
+                    r:
+                      type: integer
+                      example: 0
+                    isInsideArea:
+                      type: boolean
+                      example: true
+    delete:
+      summary: Удаление истории
+      tags:
+        - Journal
+      responses:
+        200:
+          description: Responce
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    example: "Completed!"
 components:
   schemas:
     x:

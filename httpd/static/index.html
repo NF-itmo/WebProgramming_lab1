@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web lab1</title>
-    <script src="./js/ajax.js"></script>
     <link rel="icon" href="assets/img/logo.ico" type="image/x-icon"/>
+    <title>Web lab1</title>
+
+    <script src="./js/net/ajax.js"></script>
+    <script src="./js/plot.js"></script>
+    <script src="./js/historyTable.js"></script>
+    <script src="./js/error.js"></script>
+    
     <style>
         :root {
             /* Цветовая палитра в OKLCH */
@@ -520,26 +525,26 @@
                  </g>
                  
                  <style>
-                     .svg-cord-line {
-                         stroke: var(--svg-axis-primary);
-                     }
-                     .svg-cord-arrow {
-                         fill: var(--svg-axis-primary);
-                     }     
+                    .svg-cord-line {
+                        stroke: var(--svg-axis-primary);
+                    }
+                    .svg-cord-arrow {
+                        fill: var(--svg-axis-primary);
+                    }     
 
-                     .svg-caption {
-                         fill: var(--text-secondary);
-                         font-size: 12px;
-                     }     
+                    .svg-caption {
+                        fill: var(--text-secondary);
+                        font-size: 12px;
+                    }     
 
-                     .svg-fill-area {
-                         fill: var(--svg-fill-area);
-                         fill-opacity: 0.7;
-                     }
+                    .svg-fill-area {
+                        fill: var(--svg-fill-area);
+                        fill-opacity: 0.7;
+                    }
 
-                     .point-on-graph {
-                         fill: var(--accent-primary);
-                     }
+                    .point-on-graph {
+                       fill: var(--accent-primary);
+                    }
                  </style>
              </svg>
         </div>
@@ -671,167 +676,93 @@
     </div>
 
     <script>
-        // Хранение истории данных
-        let formHistory = JSON.parse(sessionStorage.getItem('formHistory')) || [];
-
-        const showError = (message) => {
-            // Убираем существующие сообщения
-            const existingErrors = document.querySelectorAll('.error-message');
-            existingErrors.forEach(error => error.remove());
-            
-            // Слздаём элемент
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = message;
-            
-            // Вставка
-            document.body.appendChild(errorDiv);
-            
-            // Убираем по прошествии 5-ти секунд
-            setTimeout(() => {
-                if (errorDiv.parentNode) {
-                    errorDiv.parentNode.removeChild(errorDiv);
-                }
-            }, 5000);
-        };
-
-        const FFCGIResponceHandler = (responce, X, Y, R) => {
-            const JSONResponce = JSON.parse(responce); 
-
-            if (JSONResponce.error) {
-                showError(`Ошибка: ${JSONResponce.error}`);
-                return;
-            }
-
-            // Сохраняем данные в историю
-            const formData = {
-                timestamp: new Date().toISOString(),
-                X: X,
-                Y: Y,
-                R: R,
-                elapsedTimeNs: JSONResponce.elapsedTimeNs,
-                isHitted: JSONResponce.result
-            };
-                
-            formHistory.push(formData);
-            sessionStorage.setItem('formHistory', JSON.stringify(formHistory));
-
-            // Обновляем таблицу
-            refreshHistoryTable();
-
-            // Обновляем график
-            refreshGraph();
-        }
+        const plot = new Plot("graph-svg");
+        const history = new HistoryTable("historyTableBody");
+        const error = new ErrorFactory("error-message")
 
         // Обработчик отправки формы
         document.getElementById('graph-test-form').addEventListener('submit', function (e) {
             e.preventDefault(); // Отключаем дефолтное поведение
             
             // Получаем все значения
-            const X = document.querySelector('input[name="X"]:checked').value;
-            const R = document.querySelector('input[name="R"]:checked').value;
-            const Y = document.getElementById('Y').value;
+            const X = Number(document.querySelector('input[name="X"]:checked').value);
+            const R = Number(document.querySelector('input[name="R"]:checked').value);
+            const Y = Number(document.getElementById('Y').value);
 
-
- 		    if (!new RegExp("^(-?[1-9]\d*(\.\d+)?)|(^-?0(\.\d*[1-9]))$").test(Y) && Y !== '') {
-        		showError(`Ошибка: число Y не соответствует здравому смыслу`);
-        		return;
-      		}
-
-      		if (X && R && Y) {
-                sendAJAXGETRequest("/fcgi/", {"x": X, "y": Y, "r": R}, (data) => {FFCGIResponceHandler(data, X,Y,R)});
-
-                // Очищаем форму
-                this.reset();
-                
-         	} else {
-               	alert('Пожалуйста, заполните все поля формы')
-            }
+            sendAJAXRequest("GET", "/fcgi/test", {"x": X, "y": Y, "r": R})
+                .then(
+                    result => {testHandler(result, X, Y, R)},
+                    result => {errorHandler(result)}
+                );
+            
+            this.reset();
         });
 
-
-        // Функция для обновления таблицы истории
-        // TODO: переделать говнокод!
-        const refreshHistoryTable = () => {
-            const tableBody = document.getElementById('historyTableBody');
-            const emptyHistory = document.getElementById('emptyHistory');
-            
-            tableBody.innerHTML = '';
-            
-            if (formHistory.length === 0) {
-                emptyHistory.style.display = 'block';
-                return;
-            }
-            
-            emptyHistory.style.display = 'none';
-            
-            // Сортируем историю по дате (новые сверху)
-            const sortedHistory = [...formHistory].reverse();
-            
-            sortedHistory.forEach((elem, index) => {
-                const row = document.createElement('tr');
-
-                row.innerHTML = `
-                    <td>${new Date(elem.timestamp).toLocaleString('ru-RU')}</td>
-                    <td>${elem.elapsedTimeNs} ns</td>
-                    <td>${elem.X}</td>
-                    <td>${elem.Y}</td>
-                    <td>${elem.R}</td>
-                    <td>${elem.isHitted ? 'HIT' : 'MISS'}</td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
+        const errorHandler = (result) => {
+            const JSONResponce = JSON.parse(result.response);
+            error.showError(`Ошибка: ${JSONResponce.error} (${result.status})`)
         }
 
-        // TODO: переделать говнокод!
-        const refreshGraph = () => {
-            const svgns = "http://www.w3.org/2000/svg";
-            const container = document.getElementById('graph-svg');
+        const testHandler = (result, X, Y, R) => {
+            const JSONResponce = JSON.parse(result.response);
+                        
+            // Обновляем таблицу
+            history.addHistoryItem(
+                new Date().toISOString(),
+                JSONResponce.elapsedTimeNs,
+                X,
+                Y,
+                R,
+                JSONResponce.result
+            )
 
-            formHistory.forEach((elem, index) => {
-                const X = parseFloat(elem.X);
-                const Y = parseFloat(elem.Y);
-                const R = parseFloat(elem.R);
-
-                const cx = 20 + (1 + X/R)*80;
-                const cy = 20 + (1 - Y/R)*80;
-
-                if (!container.querySelector(`circle[cx="${cx}"][cy="${cy}"]`) && 0 <= cx <= 200 && 0 <= cy <= 200) {
-                    const point = document.createElementNS(svgns, 'circle');
-
-                    point.setAttributeNS(null, 'cx', cx);
-                    point.setAttributeNS(null, 'cy', cy);
-                    point.setAttributeNS(null, 'r', 3);
-                    point.setAttributeNS(null, 'class', 'point-on-graph' );
-
-                    container.appendChild(point);
-                }
-            });
-        }
-
-        const clearGraph = () => {
-            const container = document.getElementById('graph-svg');
-            container.querySelectorAll('circle').forEach((elem) => {
-                elem.remove();
-            })
+            // Обновляем график
+            plot.addPoint(
+                ...convertInputCordsToSvgCords(X, Y, R),
+                3,
+                "point-on-graph"
+            );
         }
 
         // Функция для очистки истории
         const clearHistory = () => {
             if (confirm('Вы уверены, что хотите очистить всю историю?')) {
-                formHistory = [];
-                localStorage.setItem('formHistory', JSON.stringify(formHistory));
-
-                refreshHistoryTable();
-
-                clearGraph();
+                history.clear();
+                plot.clear();
+                sendAJAXRequest("DELETE", "/fcgi/journal")
+                    .then(
+                        result => {},
+                        result => {errorHandler(result)}
+                    );
             }
         }
+
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
-            refreshHistoryTable();
-            refreshGraph();
+            // Получаем историю с сервера
+            sendAJAXRequest("GET", "/fcgi/journal")
+                .then(
+                    result => {
+                        const JSONResponce = JSON.parse(result.response);
+                        JSONResponce.result.forEach((elem) => {
+                            plot.addPoint(
+                                ...convertInputCordsToSvgCords(elem.x, elem.y, elem.r),
+                                3,
+                                "point-on-graph"
+                            );
+                            history.addHistoryItem(
+                                new Date(elem.timestamp).toISOString(),
+                                elem.elapsedTimeNs,
+                                elem.x,
+                                elem.y,
+                                elem.r,
+                                elem.isInsideArea
+                            )
+                        });
+                        
+                    },
+                    result => {errorHandler(result)}
+                );
         });
     </script>
 </body>

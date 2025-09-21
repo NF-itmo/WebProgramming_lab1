@@ -1,4 +1,4 @@
-package org.web1.utils.mappers;
+package org.web1.utils.json;
 
 import java.util.HashMap;
 
