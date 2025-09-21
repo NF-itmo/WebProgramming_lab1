@@ -3,6 +3,8 @@ package org.web1.http.handler.tester;
 import org.validator.ValidatedRecordFactory;
 import org.validator.validation.exceptions.ValidationException;
 import org.web1.http.RequestContext;
+import org.web1.http.handler.journal.utils.Journal;
+import org.web1.http.handler.journal.utils.JournalItem;
 import org.web1.http.handler.tester.checkers.Checker;
 import org.web1.http.handler.tester.checkers.CheckerFunction;
 import org.web1.utils.json.JsonBuilder;
@@ -14,6 +16,12 @@ import java.util.function.Consumer;
 public class Tester implements Consumer<RequestContext> {
     private static final Stopwatch timer = new Stopwatch();
     private static final CheckerFunction checker = new Checker();
+
+    private final Journal journal;
+
+    public Tester(Journal journal) {
+        this.journal = journal;
+    }
 
     @Override
     public void accept(
@@ -33,6 +41,19 @@ public class Tester implements Consumer<RequestContext> {
                     Integer.parseInt(requestData.X()),
                     Float.parseFloat(requestData.Y()),
                     Float.parseFloat(requestData.R())
+            );
+
+            final long elapsedTime = timer.stop();
+
+            this.journal.append(
+                    new JournalItem(
+                            System.currentTimeMillis(),
+                            elapsedTime,
+                            Integer.parseInt(requestData.X()),
+                            Float.parseFloat(requestData.Y()),
+                            Float.parseFloat(requestData.R()),
+                            checkResult
+                    )
             );
 
             endpointData.responseController().send(
