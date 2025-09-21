@@ -1,4 +1,4 @@
-package org.web1.DTOs;
+package org.web1.http.handler.tester;
 
 import org.validator.annotations.Number;
 

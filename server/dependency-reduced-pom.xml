@@ -12,7 +12,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.web1.Main</mainClass>
+              <mainClass>org.web1.Application</mainClass>
             </manifest>
             <manifestEntries>
               <Multi-Release>true</Multi-Release>

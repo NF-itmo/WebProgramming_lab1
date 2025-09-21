@@ -1,4 +1,4 @@
-package org.web1.checkers.utils;
+package org.web1.http.handler.tester.checkers.utils;
 
 public enum PlotQuarters {
     FIRST_QUADRANT,

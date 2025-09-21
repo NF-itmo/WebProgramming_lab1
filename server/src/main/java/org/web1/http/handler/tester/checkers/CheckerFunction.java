@@ -1,4 +1,4 @@
-package org.web1.checkers;
+package org.web1.http.handler.tester.checkers;
 
 import java.util.HashMap;
 
